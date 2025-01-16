@@ -1,11 +1,12 @@
 import pandas as pd
 import requests
+import os
 from bs4 import BeautifulSoup
 from pathlib import Path
 
 current_dir = Path(__file__).resolve().parent
-
 file_path = current_dir.parent.parent / 'db_embrapa_bkp'
+gh_url = 'https://raw.githubusercontent.com/OliveiraGiulio/Tech-Challenge-1/refs/heads/main/db_embrapa_bkp'
 
 dict_dados = {
      'Producao'       :'opt_02'
@@ -85,9 +86,11 @@ class DadosEmbrapa():
                 return response
             except requests.exceptions.RequestException:
                 if subopcao is None:
+                    
                     try:
                         print(f'Recorrendo ao arquivo backup...')
-                        response = pd.read_csv(rf'{file_path}\{tabela}.csv', sep=';')
+                        response = pd.read_csv(rf'{gh_url}/{tabela}.csv', sep=';')
+                        #response = pd.read_csv(rf'{file_path}\{tabela}.csv', sep=';')
                         response = response[(response['Year'] == ano)].reset_index(drop=True)
                         response.drop(columns={'Year', 'Category'}, inplace=True)
                         return response
@@ -96,7 +99,8 @@ class DadosEmbrapa():
                 else:
                     try:
                         print(f'Recorrendo ao arquivo backup...')
-                        response = pd.read_csv(rf'{file_path}\{tabela}.csv', sep=';')
+                        response = pd.read_csv(rf'{gh_url}/{tabela}.csv', sep=';')
+                        #response = pd.read_csv(rf'{file_path}\{tabela}.csv', sep=';')
                         response = response[(response['Year'] == ano) & (response['Subcategory'] == subopcao)].reset_index(drop=True)
                         response.drop(columns={'Year', 'Category', 'Subcategory'}, inplace=True)
                         return response
